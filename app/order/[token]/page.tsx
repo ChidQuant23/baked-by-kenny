@@ -1,6 +1,7 @@
 import { getEnquiryByToken } from "@/lib/db";
 import { BUSINESS_NAME, CURRENCY, C } from "@/lib/constants";
 import CakeMark from "../../components/CakeMark";
+import Link from "next/link";
 import PayButton from "./PayButton";
 
 export const dynamic = "force-dynamic";
@@ -53,10 +54,10 @@ export default async function OrderPage({
 
   return (
     <div style={wrap}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22 }}>
+      <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 22, textDecoration: "none", color: C.maroon }}>
         <CakeMark size={36} />
         <span className="bbk-script" style={{ fontSize: 32 }}>{BUSINESS_NAME}</span>
-      </div>
+      </Link>
 
       <div style={card}>
         <h1 className="bbk-display" style={{ fontSize: 28, margin: "0 0 4px", fontWeight: 700 }}>

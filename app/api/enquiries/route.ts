@@ -9,8 +9,8 @@ function id() {
 export async function POST(req: NextRequest) {
   try {
     const b = await req.json();
-    if (!b?.name?.trim() || (!b?.email?.trim() && !b?.phone?.trim())) {
-      return NextResponse.json({ error: "Missing name or contact" }, { status: 400 });
+    if (!b?.name?.trim() || !b?.phone?.trim()) {
+      return NextResponse.json({ error: "Missing name or phone" }, { status: 400 });
     }
     const enquiry = await createEnquiry({
       id: id(),

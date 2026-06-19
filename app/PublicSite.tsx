@@ -76,8 +76,8 @@ export default function PublicSite({ pricing, products }: { pricing: Pricing; pr
   const submit = async () => {
     const er: Record<string, string> = {};
     if (!form.name.trim()) er.name = "Please add a name";
-    if (!form.email.trim() && !form.phone.trim()) er.email = "Add an email or phone so Kenny can reply";
-    else if (form.email && !/^[^@]+@[^@]+\.[^@]+$/.test(form.email)) er.email = "That email doesn't look right";
+    if (!form.phone.trim()) er.phone = "Please add a phone number so Kenny can reply";
+    if (form.email && !/^[^@]+@[^@]+\.[^@]+$/.test(form.email)) er.email = "That email doesn't look right";
     if (!form.collection) er.collection = "When would you like to collect it?";
     setErrors(er);
     if (Object.keys(er).length) return;
@@ -117,10 +117,10 @@ export default function PublicSite({ pricing, products }: { pricing: Pricing; pr
   return (
     <div style={{ background: C.peach, minHeight: "100vh", color: C.maroon }}>
       <header style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px clamp(16px,5vw,56px)", maxWidth: 1100, margin: "0 auto" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <CakeMark size={38} />
-          <span className="bbk-script" style={{ fontSize: 34, color: C.maroon, lineHeight: 1 }}>{BUSINESS_NAME}</span>
-        </div>
+        <Link href="/" style={{ display: "flex", alignItems: "center", gap: 11, textDecoration: "none", color: C.maroon }}>
+          <CakeMark size={46} />
+          <span className="bbk-script" style={{ fontSize: 42, color: C.maroon, lineHeight: 1 }}>{BUSINESS_NAME}</span>
+        </Link>
         <nav style={{ display: "flex", gap: 22, fontSize: 18, alignItems: "center" }}>
           <a href="#prices" style={{ textDecoration: "none", fontWeight: 600 }}>Prices</a>
           {products.length > 0 && <a href="#shop" style={{ textDecoration: "none", fontWeight: 600 }}>Shop</a>}
@@ -224,11 +224,11 @@ export default function PublicSite({ pricing, products }: { pricing: Pricing; pr
               <input style={inputStyle} value={form.name} onChange={set("name")} placeholder="e.g. Sara Bell" />
             </Field>
             <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))" }}>
-              <Field label="Email" error={errors.email}>
-                <input style={inputStyle} value={form.email} onChange={set("email")} placeholder="you@email.com" inputMode="email" />
-              </Field>
-              <Field label="Phone (optional)">
+              <Field label="Phone / WhatsApp" error={errors.phone}>
                 <input style={inputStyle} value={form.phone} onChange={set("phone")} placeholder="07…" inputMode="tel" />
+              </Field>
+              <Field label="Email (optional)" error={errors.email}>
+                <input style={inputStyle} value={form.email} onChange={set("email")} placeholder="you@email.com" inputMode="email" />
               </Field>
             </div>
             <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit,minmax(180px,1fr))" }}>
