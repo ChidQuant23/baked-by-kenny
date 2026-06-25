@@ -1,7 +1,7 @@
 import postgres from "postgres";
 import {
   DEFAULT_PRICING, DEFAULT_PRODUCTS,
-  type Enquiry, type Pricing, type Product, type Status, type PaymentStatus, type Source,
+  type Enquiry, type Pricing, type Product, type Status, type PaymentStatus, type Source, type GalleryPhoto,
 } from "./constants";
 import { randomBytes } from "crypto";
 
@@ -44,6 +44,14 @@ export async function ensureSchema() {
       key   TEXT PRIMARY KEY,
       value JSONB NOT NULL
     )`;
+    await sql`
+    CREATE TABLE IF NOT EXISTS gallery_photos (
+      id         TEXT PRIMARY KEY,
+      url        TEXT NOT NULL,
+      caption    TEXT,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    )`;
+
   // Migrations for the payment features (safe to run repeatedly).
   await sql`ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS token TEXT`;
   await sql`ALTER TABLE enquiries ADD COLUMN IF NOT EXISTS source TEXT NOT NULL DEFAULT 'enquiry'`;
@@ -217,4 +225,37 @@ export async function deleteEnquiry(id: string): Promise<void> {
 export async function markAllSeen(): Promise<void> {
   await ensureSchema();
   await sql`UPDATE enquiries SET seen = TRUE WHERE seen = FALSE`;
+}
+/* ---------- gallery ---------- */
+export async function listPhotos(): Promise<GalleryPhoto[]> {
+  await ensureSchema();
+  const rows = await sql`SELECT * FROM gallery_photos ORDER BY created_at DESC`;
+  return rows.map((r) => ({
+    id: r.id as string,
+    url: r.url as string,
+    caption: (r.caption as string) ?? null,
+    createdAt: new Date(r.created_at as string).toISOString(),
+  }));
+}
+
+export async function countPhotos(): Promise<number> {
+  await ensureSchema();
+  const rows = await sql`SELECT COUNT(*)::int AS n FROM gallery_photos`;
+  return rows[0].n as number;
+}
+
+export async function addPhoto(id: string, url: string, caption: string | null): Promise<GalleryPhoto> {
+  await ensureSchema();
+  const rows = await sql`
+    INSERT INTO gallery_photos (id, url, caption) VALUES (${id}, ${url}, ${caption})
+    RETURNING *`;
+  const r = rows[0];
+  return { id: r.id as string, url: r.url as string, caption: (r.caption as string) ?? null, createdAt: new Date(r.created_at as string).toISOString() };
+}
+
+// Removes the DB row and returns its URL so the caller can delete the file too.
+export async function deletePhoto(id: string): Promise<string | null> {
+  await ensureSchema();
+  const rows = await sql`DELETE FROM gallery_photos WHERE id = ${id} RETURNING url`;
+  return rows.length ? (rows[0].url as string) : null;
 }

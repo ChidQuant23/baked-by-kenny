@@ -1,5 +1,5 @@
 "use client";
-
+import GalleryManager from "./GalleryManager";
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -8,7 +8,7 @@ import {
 import CakeMark from "../components/CakeMark";
 import {
   BUSINESS_NAME, CURRENCY, C, STATUSES, STATUS_STYLE,
-  type Enquiry, type Pricing, type Product, type Status,
+  type Enquiry, type Pricing, type Product, type Status, type GalleryPhoto
 } from "@/lib/constants";
 
 const inputStyle: React.CSSProperties = {
@@ -50,12 +50,14 @@ function EmptyState({ icon, title, body }: { icon: React.ReactNode; title: strin
 }
 
 export default function Dashboard({
-  initialEnquiries, initialPricing, initialProducts,
-}: { initialEnquiries: Enquiry[]; initialPricing: Pricing; initialProducts: Product[] }) {
+  initialEnquiries, initialPricing, initialProducts, initialPhotos,
+}: { initialEnquiries: Enquiry[]; initialPricing: Pricing; initialProducts: Product[]; initialPhotos: GalleryPhoto[] }) {
   const router = useRouter();
   const [enquiries, setEnquiries] = useState<Enquiry[]>(initialEnquiries);
   const [pricing, setPricing] = useState<Pricing>(initialPricing);
-  const [tab, setTab] = useState<"orders" | "upcoming" | "shop" | "pricing">("orders");
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [photos, setPhotos] = useState<GalleryPhoto[]>(initialPhotos);
+  const [tab, setTab] = useState<"orders" | "upcoming" | "shop" | "gallery" | "pricing">("orders");
   const [filter, setFilter] = useState<string>("All");
 
   const newCount = enquiries.filter((e) => !e.seen).length;
@@ -107,6 +109,7 @@ export default function Dashboard({
           ["orders", "All orders", enquiries.length],
           ["upcoming", "Upcoming collections", upcoming.length],
           ["shop", "Standard items", null],
+          ["gallery", "Gallery", null],
           ["pricing", "Edit prices", null],
         ] as const).map(([id, label, count]) => (
           <button key={id} onClick={() => setTab(id)} style={{
@@ -170,6 +173,7 @@ export default function Dashboard({
             )
           )}
 
+          {tab === "gallery" && <GalleryManager initialPhotos={initialPhotos} />}
           {tab === "shop" && <ProductsEditor products={initialProducts} />}
           {tab === "pricing" && <PricingEditor pricing={pricing} onSaved={setPricing} />}
         </div>

@@ -55,7 +55,7 @@ function ProductCard({ product }: { product: Product }) {
   );
 }
 
-export default function PublicSite({ pricing, products }: { pricing: Pricing; products: Product[] }) {
+export default function PublicSite({ pricing, products, hasGallery }: { pricing: Pricing; products: Product[]; hasGallery: boolean }) {
   const [size, setSize] = useState(pricing.sizes[1]?.id ?? pricing.sizes[0].id);
   const [flavour, setFlavour] = useState(pricing.flavours[0].id);
 
@@ -122,9 +122,10 @@ export default function PublicSite({ pricing, products }: { pricing: Pricing; pr
           <span className="bbk-script" style={{ fontSize: 42, color: C.maroon, lineHeight: 1 }}>{BUSINESS_NAME}</span>
         </Link>
         <nav style={{ display: "flex", gap: 22, fontSize: 18, alignItems: "center" }}>
-          <a href="#prices" style={{ textDecoration: "none", fontWeight: 600 }}>Prices</a>
-          {products.length > 0 && <a href="#shop" style={{ textDecoration: "none", fontWeight: 600 }}>Shop</a>}
-          <a href="#enquire" style={{ textDecoration: "none", fontWeight: 600 }}>Order</a>
+          <Link href="#prices" style={{ textDecoration: "none", fontWeight: 600 }}>Prices</Link>
+          {products.length > 0 && <Link href="#shop" style={{ textDecoration: "none", fontWeight: 600 }}>Shop</Link>}
+          <Link href="#enquire" style={{ textDecoration: "none", fontWeight: 600 }}>Order</Link>
+          {hasGallery && <Link href="/gallery" style={{ textDecoration: "none", fontWeight: 600 }}>Gallery</Link>}
         </nav>
       </header>
 

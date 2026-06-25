@@ -63,6 +63,13 @@ export const DEFAULT_PRODUCTS: Product[] = [
 
 export type PaymentStatus = "unpaid" | "paid";
 
+export type GalleryPhoto = {
+  id: string;
+  url: string;
+  caption: string | null;
+  createdAt: string;
+};
+
 // "enquiry" = bespoke order placed via the form (priced after a call).
 // "standard" = a fixed-price item bought instantly through checkout.
 export type Source = "enquiry" | "standard";
